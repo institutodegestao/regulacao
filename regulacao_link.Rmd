@@ -1,0 +1,68 @@
+---
+title: "Central de Regulacao Hospitalar - COVID-19"
+output:
+   flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    navbar:
+      - { title: "Painel", href: "https://dados.seplag.pe.gov.br/appsr/regulacao/", align: left }
+    theme: default
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+source('./global1.R') # carrega o pacote global, com bibliotecas e ETL
+
+```
+
+Bases {data-icon="fa-table"}
+=====================================
+
+Row {.tabset data-height=600}
+-------------------------------------
+
+### Exames
+```{r}
+downloadHandler(
+    filename = function() {
+      paste("Base Cruzamento_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv2(exameTotal, file)
+    },
+    outputArgs = list(label = "Download csv")
+  )
+
+DT::datatable(exameTotal, extensions = c('Buttons', 'KeyTable', 'Responsive'), rownames = FALSE, options = list(keys = TRUE, dom = 'frtip')
+)
+
+# datatable(exameTotal,
+#       filter = 'top',
+#       options = list(
+#       scrollY = '300px', 
+#       paging = FALSE, 
+#       scrollX = TRUE,
+#       deferRender = TRUE)
+# )
+
+# DT::datatable(
+#       exameTotal,
+#       filter = 'top', extensions = c('Buttons', 'Scroller'),
+#       options = list(scrollY = 650,
+#                      scrollX = 500,
+#                      deferRender = TRUE,
+#                      scroller = TRUE,
+#                      # paging = TRUE,
+#                      # pageLength = 25,
+#                      buttons = list('copy',
+#                                     list(extend = 'colvis', targets = 0, visible = FALSE)),
+#                      dom = 'lBfrtip',
+#                      fixedColumns = TRUE), 
+#       rownames = FALSE)
+# DT::datatable(exameTotal, 
+#               filter = 'top', 
+#               extensions = c('Buttons', 'Scroller', 'FixedColumns'), rownames = FALSE, options = list(deferRender = TRUE, scrollY = '370px',fixedColumns = TRUE, paging = FALSE, scrollX = TRUE, dom = 'Bfrtip', buttons = c('csv'))
+# )
+```

@@ -1,0 +1,637 @@
+---
+title: "Central de Regulacao Hospitalar - Geral"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    theme: lumen
+runtime: shiny
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+source('./globalgeral.R')
+
+```
+
+<!--- Inicio Aba UTI por Especialidade -->
+  
+UTI {data-icon="fa-adjust"}
+===================================== 
+  
+Row {data-height=20}
+-------------------------------------
+  
+```{r carga UTI}
+time <- read.csv2('tempo.csv', sep = ';')
+colnames(time) <- c('hora_carga')
+
+valueBox(value =  tags$p(time$hora_carga, style = "font-size: 100%;"))   
+```
+
+<!--- UTI ADUL -->
+  
+Row {data-height=60} <!--- UTI ADUL Row 1 -->
+-------------------------------------
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO') %>% summarize(total = sum(leito))), style = "font-size: 125%;"))`
+  
+```{r UTI Adulto}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Geral ', percent(uti_rel,0)), style = "font-size: 90%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)    
+```
+
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & situacao == 'RESERVADO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & situacao == 'BLOQUEADO') %>% summarize(total = sum(leito))), style = "font-size: 125%;"))`
+
+```{r UTI Adulto RMR}
+uti_livre <- leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito & situacao != 'LIVRE') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(regiao == 'RMR' & dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('RMR', percent(uti_rel,0)), style = "font-size: 90%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)    
+```
+
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & situacao == 'RESERVADO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & situacao == 'BLOQUEADO') %>% summarize(total = sum(leito))), style = "font-size: 125%;"))`
+
+```{r UTI Adulto INTERIOR}
+uti_livre <- leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito & situacao != 'LIVRE') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(regiao == 'INTERIOR' & dt_leito == max_dt_leito) %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('INTERIOR', percent(uti_rel,0)), style = "font-size: 90%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)    
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 1 -->
+-------------------------------------
+  
+<!--- UTI ADUL CASA DE SAUDE SAO VICENTE -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul casa serra}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CASA DE SAUDE SAO VICENTE - SERRA TALHADA') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Casa S. Vicente ', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)    
+```
+
+<!--- UTI HOSPITAL MEMORIAL GUARARAPES -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul memorial guararapes}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MEMORIAL GUARARAPES') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Memorial Guararapes', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)    
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 3 -->
+-------------------------------------
+  
+<!--- UTI CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul casa perpetuo}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CASA DE SAUDE PERPETUO SOCORRO - GARANHUNS') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Casa P. Socorro', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI CESAC - PAULISTA -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul cesac paulista}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'CESAC - PAULISTA') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Cesac Paulista', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL DAS CLINICAS - UFPE RECIFE -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul ufpe recife}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL DAS CLINICAS - UFPE RECIFE') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('HC UFPE', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 4 -->
+-------------------------------------
+
+<!--- UTI HOSPITAL JESUS PEQUENINO - BEZERROS -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul jesuspeq}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL JESUS PEQUENINO - BEZERROS') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Jesus Pequenino', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul joao murilo}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL JOAO MURILO E POLICLINICA DE VITORIA') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Joao Murilo', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL MARIA LUCINDA - RECIFE -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul ma lucinda}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MARIA LUCINDA - RECIFE') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Maria Lucinda', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 5 -->
+-------------------------------------
+
+<!--- UTI HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul ma vitoria}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MARIA VITORIA - S. LOURENCO DA MATA') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Maria Vitoria', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL MEMORIAL JABOATAO -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul memorial jaboatao}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MEMORIAL JABOATAO') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Memorial Jaboatao', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL MESTRE VITALINO -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul mestre vitalino}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL MESTRE VITALINO') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Mestre Vitalino', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 6 -->
+-------------------------------------
+
+<!--- UTI HOSPITAL REGIONAL DOM MOURA - GARANHUNS -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul dom moura}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL REGIONAL DOM MOURA - GARANHUNS') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Dom Moura', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI HOSPITAL SANTA ROSA - PALMARES -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul santa rosa}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & situacao != 'LIVRE' & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'HOSPITAL SANTA ROSA - PALMARES') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('Santa Rosa', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+<!--- UTI REAL HOSPITAL PORTUGUES -->
+  
+### `r valueBox(value =  tags$p(paste('Dsp ', leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'OCUPADO' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), 'Li ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'LIVRE' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), 'Rs ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'RESERVADO' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'OCUPADO' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), 'Ag Li', leitos_uti %>% filter(dt_leito == max_dt_leito & status == 'LEITO AUTOGESTAO' & situacao == 'LIVRE' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leitos_uti %>% filter(dt_leito == max_dt_leito & situacao == 'BLOQUEADO' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+  
+```{r uti adul rhp}
+uti_livre <- leitos_uti %>% filter(dt_leito == max_dt_leito & status != 'LIVRE' & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leitos_uti %>% filter(dt_leito == max_dt_leito & unidade == 'REAL HOSPITAL PORTUGUES') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+
+valueBox(value =  tags$p(paste('RHP', percent(uti_rel,0)), style = "font-size: 70%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+)
+```
+
+Row {data-height=60} <!--- UTI ADUL Row 7 -->
+-------------------------------------
+
+### Leitos de UTI por Tipo/Hospital
+
+```{r}
+  leitoTipo <- leitos_uti %>% group_by(tipo, unidade, especialidade = esp_leito, situacao = situacao, status = status) %>% filter(situacao != 'INATIVO', dt_leito == max_dt_leito) %>% summarize(leitos = sum(leito))
+  leitoTipo <- as.data.frame(leitoTipo)
+  
+  leitoTipo <- leitoTipo %>% tidyr::pivot_wider(names_from = tipo, values_from = leitos)
+  
+  downloadHandler(
+    filename = function() {
+      paste("leitos_tipo_hospital_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv2(leitoTipo, file)
+    },
+    outputArgs = list(label = "Download csv")
+  )
+  
+  datatable(leitoTipo,
+      filter = 'top',
+      options = list(
+scrollY = '200px', paging = FALSE, scrollX = TRUE)
+)
+```
+
+Solicitacoes {data-icon="fa-ambulance"}
+===================================== 
+
+Row {data-height=20}
+-------------------------------------
+
+```{r painal solicitacoes atualizacao}
+time <- read.csv2('tempo.csv', sep = ';')
+colnames(time) <- c('hora_carga')
+  
+valueBox(value =  tags$p(time$hora_carga, style = "font-size: 100%;"))   
+```
+
+Row {data-height=100}
+-------------------------------------
+
+### Solicitacoes Hoje
+
+```{r painel solicitacoes sol hoje}
+renderValueBox({
+valueBox(sol_pac %>% filter(data_sol == max_dt_base_sol) %>% summarize(total = sum(sol)))
+})
+```
+
+### Solicitacoes Ativas
+
+```{r painel solicitacoes ativas geral}
+renderValueBox({
+  valueBox(sol_hist_nova %>% filter(dt_base_sol == max_dt_base_sol) %>% summarize(total = sum(lista))
+           )
+})
+```
+
+### Var. Sol. Antontem-Ontem
+
+```{r}
+renderValueBox({
+var_sol <- sol_pac %>% filter(data_sol == max_dt_base_sol-1) %>% summarize(total = sum(sol)) / sol_pac %>% filter(data_sol == max_dt_base_sol-2) %>% summarize(total = sum(sol)) - 1
+
+valueBox(percent(var_sol,0))
+})
+```
+
+Row {data-height=100}
+-------------------------------------
+
+### Solicitacoes Ativas UTI
+
+```{r painel solicitacoes ativas uti}
+renderValueBox({
+  valueBox(sol_hist_nova %>% filter(dt_base_sol == max_dt_base_sol & tipo2_leito_reg == 'UTI') %>% summarize(total = sum(lista))
+           )
+})
+```
+
+### Solicitacoes Ativas Enfermaria
+
+```{r painel solicitacoes ativas enf}
+renderValueBox({
+  valueBox(sol_hist_nova %>% filter(dt_base_sol == max_dt_base_sol & tipo2_leito_reg != 'UTI') %>% summarize(total = sum(lista))
+           )
+})
+```
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Ativas por Dia
+
+```{r}
+selectizeInput('at_mun', 'Municipio', choices = c('GERAL', sort(as.character(unique(sol_hist_nova$municipio2)))), selected = 'GERAL')
+
+renderPlotly({
+
+  if(input$at_mun == "GERAL") {
+  
+x <- sol_hist_nova %>% filter(tipo2_leito_reg=='UTI') %>% group_by(data = dt_base_sol) %>%  summarize(UTI = sum(lista))
+y <- sol_hist_nova %>% filter(tipo2_leito_reg=='ENFERMARIA') %>% group_by(data = dt_base_sol) %>%  summarize(ENFERMARIA = sum(lista))
+z <- merge(x, y, by='data', all = T)
+z <- z %>% replace(is.na(.), 0)
+  }
+  
+  else{
+  x <- sol_hist_nova %>% filter(tipo2_leito_reg=='UTI' & municipio2==input$at_mun) %>% group_by(data = dt_base_sol) %>%  summarize(UTI = sum(lista))
+y <- sol_hist_nova %>% filter(tipo2_leito_reg=='ENFERMARIA' & municipio2==input$at_mun) %>% group_by(data = dt_base_sol) %>%  summarize(ENFERMARIA = sum(lista))
+z <- merge(x, y, by='data', all = T)
+z <- z %>% replace(is.na(.), 0)  
+  }
+
+plotly::plot_ly(data = z) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~UTI+ENFERMARIA,
+    type = 'bar',
+    textposition = 'outside',
+    name = "Total",
+    line = list(color = "gray"),
+    marker = list(color = "gray")
+  ) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~UTI,
+    type = 'scatter', mode = 'lines',
+    textposition = 'outside',
+    name = "UTI",
+    line = list(color = "red"),
+    marker = list(color = "red")
+  ) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~ENFERMARIA,
+    type = 'scatter', mode = 'lines',
+    textposition = 'outside',
+    name = "ENFERMARIA",
+    line = list(color = "blue"),
+    marker = list(color = "blue")
+  ) %>%
+  plotly::layout(
+    height = 300, 
+    yaxis = list(title = "Solicitacoes em fila por dia"),
+    xaxis = list(title = "Data"),
+    hovermode = "compare"
+  )
+
+})
+```
+
+### Ativas em aberto no Dia
+
+```{r}
+selectizeInput('at_mun_dia', 'Municipio', choices = c('GERAL', sort(as.character(unique(sol_hist_nova$municipio2)))), selected = 'GERAL')
+
+renderPlotly({
+
+  if(input$at_mun == "GERAL") {
+  
+x <- sol_hist_nova %>% filter(tipo2_leito_reg=='UTI') %>% group_by(data = dt_base_sol) %>%  summarize(UTI = sum(lista_dia))
+y <- sol_hist_nova %>% filter(tipo2_leito_reg=='ENFERMARIA') %>% group_by(data = dt_base_sol) %>%  summarize(ENFERMARIA = sum(lista_dia))
+z <- merge(x, y, by='data', all = T)
+z <- z %>% replace(is.na(.), 0)
+  }
+  
+  else{
+  x <- sol_hist_nova %>% filter(tipo2_leito_reg=='UTI' & municipio2==input$at_mun) %>% group_by(data = dt_base_sol) %>%  summarize(UTI = sum(lista_dia))
+y <- sol_hist_nova %>% filter(tipo2_leito_reg=='ENFERMARIA' & municipio2==input$at_mun) %>% group_by(data = dt_base_sol) %>%  summarize(ENFERMARIA = sum(lista_dia))
+z <- merge(x, y, by='data', all = T)
+z <- z %>% replace(is.na(.), 0)  
+  }
+
+plotly::plot_ly(data = z) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~UTI+ENFERMARIA,
+    type = 'bar',
+    textposition = 'outside',
+    name = "Total",
+    line = list(color = "gray"),
+    marker = list(color = "gray")
+  ) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~UTI,
+    type = 'scatter', mode = 'lines',
+    textposition = 'outside',
+    name = "UTI",
+    line = list(color = "red"),
+    marker = list(color = "red")
+  ) %>%
+  plotly::add_trace(
+    x = ~data,
+    y = ~ENFERMARIA,
+    type = 'scatter', mode = 'lines',
+    textposition = 'outside',
+    name = "ENFERMARIA",
+    line = list(color = "blue"),
+    marker = list(color = "blue")
+  ) %>%
+  plotly::layout(
+    height = 300, 
+    yaxis = list(title = "Solicitacoes em fila por dia"),
+    xaxis = list(title = "Data"),
+    hovermode = "compare"
+  )
+
+})
+```
+
+### Ativas por Unidade
+
+```{r}
+  solUTI <- sol_pac %>% group_by(unidade, municipio2) %>% filter(status_sol == 'AGUARDANDO DISPONIBILIDADE', tipo2 == 'UTI') %>% summarize(UTI = sum(sol)) %>% arrange(desc(UTI))
+  solENF <- sol_pac %>% group_by(unidade, municipio2) %>% filter(status_sol == 'AGUARDANDO DISPONIBILIDADE', tipo2 == 'ENFERMARIA') %>% summarize(Enfermaria = sum(sol)) %>% arrange(desc(Enfermaria))
+  solUnid <- merge(solUTI, solENF, by = 'unidade', all = T)
+  solUnid <- solUnid %>% mutate(UTI = replace(UTI,is.na(UTI),0))
+  solUnid <- solUnid %>% mutate(Enfermaria = replace(Enfermaria,is.na(Enfermaria),0))
+  solUnid$Total <- solUnid$UTI + solUnid$Enfermaria
+  solUnid$municipio <- ifelse(is.na(solUnid$municipio2.x), as.character(solUnid$municipio2.y), as.character(solUnid$municipio2.x))
+  solUnid$municipio <- as.factor(solUnid$municipio)
+  solUnid <- solUnid[,c('unidade', 'municipio', 'UTI', 'Enfermaria', 'Total')]
+  # colnames(solUnid)[2] <- 'municipio'
+
+  downloadHandler(
+    filename = function() {
+      paste("solicitacoes_ativas_unidade_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv2(solUnid, file)
+    },
+    outputArgs = list(label = "Download csv")
+  )
+  
+  datatable(solUnid,
+      filter = 'top',
+      options = list(
+scrollY = '200px', paging = FALSE, scrollX = TRUE)
+)
+```
+
+### Gerais por Unidade
+
+```{r}
+
+  solUTI <- sol_pac %>% group_by(unidade, municipio2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'UTI') %>% summarize(UTI = sum(sol)) %>% arrange(desc(UTI))
+  solENF <- sol_pac %>% group_by(unidade, municipio2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'ENFERMARIA') %>% summarize(Enfermaria = sum(sol)) %>% arrange(desc(Enfermaria))
+  solUnid <- merge(solUTI, solENF, by = 'unidade', all = T)
+  solUnid <- solUnid %>% mutate(UTI = replace(UTI,is.na(UTI),0))
+  solUnid <- solUnid %>% mutate(Enfermaria = replace(Enfermaria,is.na(Enfermaria),0))
+  solUnid$Total <- solUnid$UTI + solUnid$Enfermaria
+  solUnid$municipio <- ifelse(is.na(solUnid$municipio2.x), as.character(solUnid$municipio2.y), as.character(solUnid$municipio2.x))
+  solUnid$municipio <- as.factor(solUnid$municipio)
+  solUnid <- solUnid[,c('unidade', 'municipio', 'UTI', 'Enfermaria', 'Total')]
+  
+downloadHandler(
+    filename = function() {
+      paste("solicitacoes_gerais_unidade_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv2(solUnid, file)
+    },
+    outputArgs = list(label = "Download csv")
+  )
+  
+  datatable(solUnid,
+      filter = 'top',
+      options = list(
+scrollY = '200px', paging = FALSE, scrollX = TRUE)
+)
+```
+
+### Gerais por Municipio
+
+```{r}
+
+  solUTI <- sol_pac %>% group_by(municipio2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'UTI') %>% summarize(UTI = sum(sol)) %>% arrange(desc(UTI))
+  solENF <- sol_pac %>% group_by(municipio2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'ENFERMARIA') %>% summarize(Enfermaria = sum(sol)) %>% arrange(desc(Enfermaria))
+  solMun <- merge(solUTI, solENF, by = 'municipio2', all = T)
+  solMun <- solMun %>% mutate(UTI = replace(UTI,is.na(UTI),0))
+  solMun <- solMun %>% mutate(Enfermaria = replace(Enfermaria,is.na(Enfermaria),0))
+  solMun$Total <- solMun$UTI + solMun$Enfermaria
+  solMun$Taxa <- solMun$Total / sum(solMun$Total)
+  solMun$Taxa <- formattable::percent(solMun$Taxa, 3)
+  solMun <- solMun[,c('municipio2', 'UTI', 'Enfermaria', 'Total', 'Taxa')]
+  colnames(solMun)[1] <- 'municipio'
+  
+  downloadHandler(
+    filename = function() {
+      paste("solicitacoes_gerais_municipio_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv2(solMun, file)
+    },
+    outputArgs = list(label = "Download csv")
+  )
+  
+  datatable(solMun,
+      filter = 'top',
+      options = list(
+scrollY = '200px', paging = FALSE, scrollX = TRUE)
+) %>% formatPercentage(c("Taxa"), 2)
+  
+```
+
+### Gerais por GERES
+
+```{r}
+renderDT({
+  if(input$hospitalInt == "GERAL") {
+  solUTI <- sol_pac %>% group_by(geres2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'UTI') %>% summarize(UTI = sum(sol)) %>% arrange(desc(UTI))
+  solENF <- sol_pac %>% group_by(geres2) %>% filter(status_sol != 'CANCELADO', tipo2 == 'ENFERMARIA') %>% summarize(Enfermaria = sum(sol)) %>% arrange(desc(Enfermaria))
+  solGeres <- merge(solUTI, solENF, by = 'geres2', all = T)
+  solGeres <- solGeres %>% mutate(UTI = replace(UTI,is.na(UTI),0))
+  solGeres <- solGeres %>% mutate(Enfermaria = replace(Enfermaria,is.na(Enfermaria),0))
+  solGeres$Total <- solGeres$UTI + solGeres$Enfermaria
+  solGeres$Taxa <- solGeres$Total / sum(solGeres$Total)
+  solGeres$Taxa <- formattable::percent(solGeres$Taxa, 3)
+  solGeres <- solGeres[,c('geres2', 'UTI', 'Enfermaria', 'Total', 'Taxa')]
+  colnames(solGeres)[1] <- 'geres'
+  }
+  else{
+  solUnid <- sol_pac %>% group_by(unidade, municipio2, tipo2) %>% filter(status_sol != 'CANCELADO' & hospital_int == input$hospitalInt) %>% summarize(leitos = sum(sol)) %>% arrange(desc(leitos))
+  }
+datatable(solGeres, 
+          filter = 'top',
+          options = list(
+scrollY = '200px', paging = FALSE, scrollX = TRUE) 
+) %>% formatPercentage(c("Taxa"), 2)
+})
+```
