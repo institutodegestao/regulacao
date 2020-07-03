@@ -699,6 +699,9 @@ valueBox(value =  tags$p(paste('Correia Picanco', percent(uti_rel,0)), style = "
          )    
 ```
 
+Row {data-height=60} <!--- UTI ADULTO 15 -->
+-------------------------------------
+
 <!--- UTI ADUL NEUROCARDIO -->
 
 ### `r valueBox(value =  tags$p(paste('Dsp ', leito %>% filter(data_ocup == max_dt_sol & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'OCUPADO' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), 'Li ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'LIVRE' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), 'Rs ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'RESERVADO' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leito %>% filter(data_ocup == max_dt_sol & status_leito == 'LEITO AUTOGESTAO' & status_inicial == 'OCUPADO' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), 'Ag Li', leito %>% filter(data_ocup == max_dt_sol & status_leito == 'LEITO AUTOGESTAO' & status_inicial == 'LIVRE' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'BLOQUEADO' & tipo_leito4 == 'u1' & hospital == 'NEUROCARDIO') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
@@ -711,6 +714,21 @@ uti_total <- leito %>% filter(data_ocup == max_dt_sol & tipo_leito4 == 'u1' & ho
 uti_rel <- uti_livre / uti_total
   
 valueBox(value =  tags$p(paste('NEUROCARDIO ', percent(uti_rel,0)), style = "font-size: 50%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
+         )    
+```
+
+<!--- UTI ADUL UPAE_PNZ -->
+
+### `r valueBox(value =  tags$p(paste('Dsp ', leito %>% filter(data_ocup == max_dt_sol & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), ' | ', 'Oc ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'OCUPADO' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), 'Li ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'LIVRE' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), 'Rs ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'RESERVADO' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), ' | ', 'Ag Oc', leito %>% filter(data_ocup == max_dt_sol & status_leito == 'LEITO AUTOGESTAO' & status_inicial == 'OCUPADO' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), 'Ag Li', leito %>% filter(data_ocup == max_dt_sol & status_leito == 'LEITO AUTOGESTAO' & status_inicial == 'LIVRE' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper)), ' | ', 'Bl ', leito %>% filter(data_ocup == max_dt_sol & status_inicial == 'BLOQUEADO' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito)) ), style = "font-size: 125%;"))`
+
+```{r uti adulto upae pnz}
+uti_livre <- leito %>% filter(data_ocup == max_dt_sol & status_inicial != 'LIVRE' & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper))
+
+uti_total <- leito %>% filter(data_ocup == max_dt_sol & tipo_leito4 == 'u1' & hospital == 'UPAE_PNZ') %>% summarize(total = sum(leito_oper))
+
+uti_rel <- uti_livre / uti_total
+  
+valueBox(value =  tags$p(paste('UPAE Petrolina', percent(uti_rel,0)), style = "font-size: 50%;"), color = ifelse(uti_rel > 0.95, "danger", ifelse(uti_rel > 0.85, 'warning', "success"))
          )    
 ```
 
